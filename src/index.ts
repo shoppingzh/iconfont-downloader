@@ -1,2 +1,5 @@
-export * from '@/utils/date'
-export * from '@/utils/math'
+import axios from 'axios'
+
+(async function() {
+  // TODO
+})()
