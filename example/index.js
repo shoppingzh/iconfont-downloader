@@ -1,5 +1,5 @@
 const path = require('path')
-const { download } = require('iconfont-downloader')
+const { download, downloadSvgs } = require('iconfont-downloader')
 const { existsSync, mkdirSync, readFileSync } = require('fs')
 
 
@@ -20,3 +20,8 @@ download({
   destDir
 })
 
+downloadSvgs({
+  pid: '3781277',
+  token: readFileSync(tokenFile, { encoding: 'utf-8'}),
+  destDir
+})
