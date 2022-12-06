@@ -1,13 +1,11 @@
-import axios from 'axios'
-import { createWriteStream, existsSync, mkdirSync, PathLike, readdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
-import AdmZip from 'adm-zip'
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
 import path from 'path'
 import fs from 'fs-extra'
+import config from './config'
+import { parseAttrs } from './parser'
+import { downloadAndUnzip } from './core'
 
-const TEMP = path.resolve(__dirname, '../.tmp')
-
-rmSync(TEMP, { force: true, recursive: true })
-mkdirSync(TEMP)
+const TEMP = config.tempDir
 
 interface BaseOptions {
   token: string,
@@ -28,49 +26,14 @@ interface SvgParsed {
   content: string,
 }
 
-async function pipStream(data: any, path: PathLike) {
-  return new Promise((resolve, reject) => {
-    const stream = createWriteStream(path)
-    stream.on('error', reject)
-    stream.on('finish', resolve)
-    data.pipe(stream)
-  })
-}
-
 function isUsefulFile(filename: string) {
   return ['.css', '.woff', '.woff2', '.svg', '.ttf'].indexOf(path.extname(filename)) >= 0
     && /^iconfont/.test(filename)
 }
 
-async function downloadAndUnzip(token: string, pid: string) {
-  return new Promise<string>(async(resolve, reject) => {
-    try {
-      const { data } = await axios({
-        url: 'https://www.iconfont.cn/api/project/download.zip',
-        params: {
-          pid
-        },
-        responseType: 'stream',
-        headers: {
-          cookie: `EGG_SESS_ICONFONT=${token}`
-        }
-      })
-      const zipFile = path.resolve(TEMP, './download.zip')
-      await pipStream(data, zipFile)
-    
-      const az = new AdmZip(zipFile)
-      az.extractAllTo(TEMP, true)
-      const dirs = readdirSync(TEMP, { withFileTypes: true }).filter(o => o.isDirectory() && /^font_/.test(o.name))
-      if (!dirs.length) return reject(new Error('文件格式错误'))
-
-      resolve(path.resolve(TEMP, dirs[0].name))
-    } catch (err) {
-      reject(err)
-    }
-  })
-}
-
 export async function download(options: DownloadOptions) {
+  rmSync(TEMP, { force: true, recursive: true })
+  mkdirSync(TEMP)
   const dir = await downloadAndUnzip(options.token, options.pid)
   readdirSync(dir, { withFileTypes: true })
     .filter(o => o.isFile() && isUsefulFile(o.name))
@@ -78,26 +41,10 @@ export async function download(options: DownloadOptions) {
       fs.copyFileSync(path.resolve(dir, o.name), path.resolve(options.destDir, o.name))
     })
   // 删掉tmp目录
-  // rmSync(TEMP, { force: true, recursive: true })
+  rmSync(TEMP, { force: true, recursive: true })
 }
 
 const JS_SVG_RE = /window\.\w+?\s*=\s*'(.*?)'/
-
-interface Attr {
-  name: string,
-  value: string,
-}
-
-function parseAttrs(content: string): Record<string, string> {
-  const re = new RegExp(/(\w+)\s*=\s*"(.*?)"/, 'g')
-  let result: RegExpExecArray | null
-  const attrs: Record<string, string> = {}
-  // eslint-disable-next-line no-cond-assign
-  while (result = re.exec(content)) {
-    attrs[result[1]] = result[2]
-  }
-  return attrs
-}
 
 function parseSvgs(content: string): SvgParsed[] {
   const re = new RegExp(/<symbol\s*(.*?)\s*>(.*?)(?:<\/symbol>)/, 'g')
@@ -118,6 +65,8 @@ function parseSvgs(content: string): SvgParsed[] {
 }
 
 async function loadSvgs(options: BaseOptions) {
+  rmSync(TEMP, { force: true, recursive: true })
+  mkdirSync(TEMP)
   const dir = await downloadAndUnzip(options.token, options.pid)
   const svgJsPath = path.resolve(dir, 'iconfont.js')
   if (!existsSync(svgJsPath)) throw new Error('不存在iconfont.js文件！')
@@ -136,4 +85,5 @@ export async function downloadSvgs(options: DownloadSvgsOptions) {
     const filename = options.filename ? options.filename(svg.id) : svg.id
     writeFileSync(path.resolve(options.destDir, `${filename}.svg`), svg.content, { encoding: 'utf-8' })
   })
+  rmSync(TEMP, { force: true, recursive: true })
 }
