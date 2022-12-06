@@ -8,10 +8,12 @@
     "src"
   ],
   "scripts": {
-    "build": "rollup -c --configPlugin=typescript --bundleConfigAsCjs --watch",
+    "dev": "rollup -c --configPlugin=typescript --bundleConfigAsCjs --watch",
+    "build": "rollup -c --configPlugin=typescript --bundleConfigAsCjs",
     "lint": "eslint src",
     "test": "jest --passWithNoTests",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "pub": "pnpm test && pnpm build && npm publish"
   },
   "repository": "git@github.com:shoppingzh/iconfont-downloader.git",
   "author": "shoppingzh <1049262057@qq.com>",
