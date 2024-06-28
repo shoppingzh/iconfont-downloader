@@ -1,0 +1,16 @@
+{
+  "presets": [
+    "@babel/preset-typescript",
+    ["@babel/preset-env", {
+      // "debug": true // 根据需要是否开启日志
+    }]
+  ],
+  "plugins": [
+    ["@babel/plugin-transform-runtime", {
+      "corejs": {
+        "version": 3,
+        "proposals": true
+      }
+    }]
+  ]
+}
