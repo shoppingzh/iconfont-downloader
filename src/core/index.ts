@@ -1,14 +1,15 @@
+import { Readable } from 'stream'
 import http from '../http/index'
 
 /**
- * 将图标包下载到流里
+ * 加载图标包
  * 
  * @param token 
  * @param pid 
  * @returns 
  */
-export async function download(token: string, pid: string): Promise<ReadableStream> {
-  const stream = await http<any, ReadableStream>({
+export async function loadStream(token: string, pid: string): Promise<Readable> {
+  const stream = await http<any, Readable>({
     url: '/project/download.zip',
     method: 'get',
     params: {
