@@ -27,9 +27,15 @@ type PickTestRegExps = Record<keyof DownloadPicks, RegExp>
 const PICK_TEST_REG_EXPS: PickTestRegExps = {
   css: /\.css$/,
   font: /\.(woff|woff2|ttf)$/,
-  svg: /\.css$/
+  svg: /\.svg$/
 }
 
+/**
+ * 下载图标包(两种方式：1.传递了destDir，下载到文件夹里 2. 否则下载到流里)
+ * 
+ * @param options 
+ * @returns 
+ */
 export async function download(options: DownloadOptions): Promise<Readable | void> {
   const { token, pid, destDir, picks = DEFAULT_PICKS } = options
   const stream = await loadStream(token, pid)
