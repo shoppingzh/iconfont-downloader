@@ -23,7 +23,7 @@ const DEFAULT_PICKS: DownloadPicks = {
 
 const PICK_TEST_REG_EXPS: PickTestRegExps = {
   css: /\.css$/,
-  font: /\.(woff|woff2|ttf)$/,
+  font: /\.(woff|woff2|ttf|eot)$/,
   svg: /\.svg$/
 }
 
