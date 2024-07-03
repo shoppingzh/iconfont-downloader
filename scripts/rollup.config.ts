@@ -14,7 +14,10 @@ import replace from '@rollup/plugin-replace'
 import { dts } from 'rollup-plugin-dts'
 import config from './config'
 
-const external = Object.keys(pkg.peerDependencies || {}).map(pkg => new RegExp(`^${pkg}`))
+const external = Object.keys({
+  ...pkg.peerDependencies,
+  ...pkg.dependencies,
+}).map(pkg => new RegExp(`^${pkg}`))
 const plugins = [
   alias({
     entries: {
