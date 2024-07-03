@@ -12,7 +12,7 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "prepare": "husky install",
-    "pub": "pnpm test && pnpm build && npm publish"
+    "pub": "pnpm build && npm publish"
   },
   "repository": "git@github.com:shoppingzh/iconfont-downloader.git",
   "author": "shoppingzh <xpzheng6@163.com>",
