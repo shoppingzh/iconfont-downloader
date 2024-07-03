@@ -2,20 +2,18 @@ import { loadStream } from '@/core'
 import { stream2Buffer } from '@/utils'
 import AdmZip, { IZipEntry } from 'adm-zip'
 import { Duplex, Readable } from 'stream'
+import { BaseOptions } from './base'
 
-interface BaseOptions {
-  token: string
-  pid: string
-}
 interface DownloadPicks {
   css?: boolean
   font?: boolean
   svg?: boolean
 }
-interface DownloadOptions extends BaseOptions {
+export interface DownloadOptions extends BaseOptions {
   destDir: string
   picks?: DownloadPicks
 }
+type PickTestRegExps = Record<keyof DownloadPicks, RegExp>
 
 const DEFAULT_PICKS: DownloadPicks = {
   css: true,
@@ -23,7 +21,6 @@ const DEFAULT_PICKS: DownloadPicks = {
   svg: true,
 }
 
-type PickTestRegExps = Record<keyof DownloadPicks, RegExp>
 const PICK_TEST_REG_EXPS: PickTestRegExps = {
   css: /\.css$/,
   font: /\.(woff|woff2|ttf)$/,

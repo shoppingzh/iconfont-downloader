@@ -1,5 +1,5 @@
 import { dirname, resolve } from 'path'
-import { download, } from 'iconfont-downloader'
+import { download, downloadSvgs } from 'iconfont-downloader'
 import { createWriteStream, existsSync, mkdirSync, readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 
@@ -16,23 +16,24 @@ if (!existsSync(tokenFile)) {
   throw new Error('请在该目录下新建token文件，并将iconfont token复制到文件内！')
 }
 
-const PID = '3781277';
+const PID = '3838794'
+const TOKEN = readFileSync(tokenFile, { encoding: 'utf-8' });
 (async() => {
   const destDir1 = resolve(__dirname, 'dist')
   mkDirIfNotExist(destDir1)
   await download({
     pid: PID,
-    token: readFileSync(tokenFile, { encoding: 'utf-8' }),
+    token: TOKEN,
     destDir: destDir1,
-    picks: {
-      css: true,
-      font: false,
-      svg: false,
-    }
+    // picks: {
+    //   css: true,
+    //   font: true,
+    //   svg: true,
+    // }
   })
   const stream = await download({
     pid: PID,
-    token: readFileSync(tokenFile, { encoding: 'utf-8' }),
+    token: TOKEN,
     picks: {
       css: false,
       font: true,
@@ -42,13 +43,21 @@ const PID = '3781277';
   const fileStream = createWriteStream(resolve(destDir1, 'download.zip'))
   stream.pipe(fileStream)
 
-  // const destDir2 = resolve(__dirname, 'dist/svg')
-  // mkDirIfNotExist(destDir2)
+  const destDir2 = resolve(__dirname, 'dist/svg')
+  mkDirIfNotExist(destDir2)
 
-  // await downloadSvgs({
-  //   pid: PID,
-  //   token: readFileSync(tokenFile, { encoding: 'utf-8' }),
-  //   destDir: destDir2,
-  //   filename: name => name.replace(/^icon-(.*)$/g, '$1'),
-  // })
+  await downloadSvgs({
+    pid: PID,
+    token: TOKEN,
+    destDir: destDir2,
+    filename: name => name.replace(/^icon-(.*)$/g, '$1'),
+  })
+
+  const stream2 = await downloadSvgs({
+    pid: PID,
+    token: TOKEN,
+    filename: name => name.replace(/^icon-(.*)$/g, 'svg-$1'),
+  })
+  const fileStream2 = createWriteStream(resolve(destDir1, 'svgs.zip'))
+  stream2.pipe(fileStream2)
 })()
