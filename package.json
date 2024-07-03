@@ -1,8 +1,9 @@
 {
   "name": "iconfont-downloader",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "iconfont图标包下载器",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "scripts": {
     "dev": "rollup -c scripts/rollup.config.ts --configPlugin=typescript={tsconfig:'scripts/tsconfig.build.json'} --bundleConfigAsCjs --watch --environment NODE_ENV:dev",
     "build": "rollup -c scripts/rollup.config.ts --configPlugin=typescript={tsconfig:'scripts/tsconfig.build.json'} --bundleConfigAsCjs --environment NODE_ENV:prod",

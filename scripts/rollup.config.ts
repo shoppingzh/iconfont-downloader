@@ -30,11 +30,15 @@ const plugins = [
 export default [
   defineConfig({
     input: 'src/index.ts',
-    output: {
+    output: [{
       dir: 'dist',
-      format: 'umd',
-      name: 'IconfontDownloader',
-    },
+      format: 'cjs',
+      entryFileNames: '[name].js'
+    }, {
+      dir: 'dist',
+      format: 'esm',
+      entryFileNames: '[name].mjs'
+    }],
     external,
     plugins: [
       ...plugins,
