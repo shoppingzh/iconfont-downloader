@@ -1,8 +1,6 @@
-import { loadStream } from '@/core'
-import { stream2Buffer } from '@/utils'
 import AdmZip, { IZipEntry } from 'adm-zip'
 import { Duplex, Readable } from 'stream'
-import { BaseOptions } from './base'
+import { BaseOptions, loadZip } from './base'
 
 interface DownloadPicks {
   css?: boolean
@@ -35,9 +33,7 @@ const PICK_TEST_REG_EXPS: PickTestRegExps = {
  */
 export async function download(options: DownloadOptions): Promise<Readable | void> {
   const { token, pid, destDir, picks = DEFAULT_PICKS } = options
-  const stream = await loadStream(token, pid)
-  const buffer = await stream2Buffer(stream)
-  const zip = new AdmZip(buffer)
+  const zip = await loadZip(token, pid)
 
   const pickEntries = zip.getEntries().reduce((all, entry) => {
     const isDir = entry.isDirectory

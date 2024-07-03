@@ -1,6 +1,6 @@
 import { dirname, resolve } from 'path'
 import { download, downloadSvgs } from 'iconfont-downloader'
-import { createWriteStream, existsSync, mkdirSync, readFileSync } from 'fs'
+import { createWriteStream, existsSync, mkdirSync, readFileSync, rm, rmSync } from 'fs'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -17,19 +17,17 @@ if (!existsSync(tokenFile)) {
 }
 
 const PID = '3838794'
-const TOKEN = readFileSync(tokenFile, { encoding: 'utf-8' });
+const TOKEN = readFileSync(tokenFile, { encoding: 'utf-8' })
+
+const destDir1 = resolve(__dirname, 'dist')
+rmSync(destDir1, { force: true, recursive: true })
+mkdirSync(destDir1);
+
 (async() => {
-  const destDir1 = resolve(__dirname, 'dist')
-  mkDirIfNotExist(destDir1)
   await download({
     pid: PID,
     token: TOKEN,
     destDir: destDir1,
-    // picks: {
-    //   css: true,
-    //   font: true,
-    //   svg: true,
-    // }
   })
   const stream = await download({
     pid: PID,

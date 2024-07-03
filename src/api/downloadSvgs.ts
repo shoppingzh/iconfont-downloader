@@ -1,6 +1,4 @@
-import { loadStream } from '@/core'
-import { BaseOptions } from './base'
-import { stream2Buffer } from '@/utils'
+import { BaseOptions, loadZip } from './base'
 import AdmZip from 'adm-zip'
 import { Duplex, Readable } from 'stream'
 import { parse } from '@/svg'
@@ -9,7 +7,9 @@ import path from 'path'
 
 type FilenameMapper = (iconName: string) => string
 export interface DownloadSvgOptions extends BaseOptions {
+  /** 文件名映射函数 */
   filename?: FilenameMapper
+  /** 目标目录 */
   destDir?: string
 }
 
@@ -24,13 +24,17 @@ function getFilename(iconName: string, fn: FilenameMapper) {
   return `${filename}.svg`
 }
 
+/**
+ * 下载svg集合
+ * 
+ * @param options 
+ * @returns 
+ */
 export async function downloadSvgs(options: DownloadSvgOptions): Promise<Readable | void> {
   const { token, pid, destDir, filename: filenameFn, } = options
-  const stream = await loadStream(token, pid)
-  const buffer = await stream2Buffer(stream)
-  const zip = new AdmZip(buffer)
+  const zip = await loadZip(token, pid)
   const entry = zip.getEntries().find(entry => !entry.isDirectory && entry.name && /^iconfont\.js$/.test(entry.name))
-  if (!entry) return Promise.reject('没有找到包含svg的javascript文件！')
+  if (!entry) throw new Error('没有找到包含svg的javascript文件！')
   const content = entry.getData().toString('utf-8')
   const result = parse(content)
 
