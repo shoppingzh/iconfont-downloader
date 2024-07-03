@@ -8,7 +8,9 @@ interface DownloadPicks {
   svg?: boolean
 }
 export interface DownloadOptions extends BaseOptions {
+  /** 写入的目标目录 */
   destDir: string
+  /** 选择图标包中的文件类型 */
   picks?: DownloadPicks
 }
 type PickTestRegExps = Record<keyof DownloadPicks, RegExp>
@@ -26,7 +28,10 @@ const PICK_TEST_REG_EXPS: PickTestRegExps = {
 }
 
 /**
- * 下载图标包(两种方式：1.传递了destDir，下载到文件夹里 2. 否则下载到流里)
+ * 下载图标包
+ * 
+ * 当传递了destDir参数时，文件会下载到该参数对应的目录里；
+ * 否则，将通过一个压缩包流的形式返回
  * 
  * @param options 
  * @returns 

@@ -9,7 +9,7 @@ import http from '../http/index'
  * @returns 
  */
 export async function loadStream(token: string, pid: string): Promise<Readable> {
-  const stream = await http<any, Readable>({
+  const stream = await http<unknown, Readable>({
     url: '/project/download.zip',
     method: 'get',
     params: {

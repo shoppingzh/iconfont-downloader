@@ -27,6 +27,9 @@ function getFilename(iconName: string, fn: FilenameMapper) {
 /**
  * 下载svg集合
  * 
+ * 当传递了destDir参数时，文件会下载到该参数对应的目录里；
+ * 否则，将通过一个压缩包流的形式返回
+ * 
  * @param options 
  * @returns 
  */
