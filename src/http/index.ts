@@ -1,8 +1,12 @@
 import axios from 'axios'
+import https from 'https'
 
 const instance = axios.create({
   baseURL: 'https://www.iconfont.cn/api',
   timeout: 60000,
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false
+  })
 })
 
 instance.interceptors.response.use(

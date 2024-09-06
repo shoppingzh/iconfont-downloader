@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "node ./index.js"
+    "go": "node ./index.js"
   },
   "keywords": [],
   "author": "",
